@@ -8,6 +8,16 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    colors: ({ colors }) => {
+      return {
+        ...colors,
+        'primary': '#1fb6ff',
+        'secondary': '#ff7849',
+        'danger': '#ff5e5b',
+        'black': '#000',
+        'white': '#fff',
+      }
+    },
     extend: {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -16,6 +26,8 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms')
+  ],
 }
 export default config

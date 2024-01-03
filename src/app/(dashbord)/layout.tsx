@@ -1,5 +1,8 @@
+import EthChecker from "@/components/ethChecker"
+import { StoreProvider } from "@/store"
 import { Metadata } from "next"
 import Link from "next/link"
+import { Suspense } from "react"
 
 export const metadata: Metadata = {
   title: 'Business',
@@ -27,7 +30,12 @@ const Layout = ({children}: {children: React.ReactNode}) => {
         <div className="flex-1 h-full relative p-4 bg-gray-900">
           <div className="w-full h-full relative scroll-bar rounded-2xl bg-gray-700">
             <div className="absolute w-full min-h-full">
+            <StoreProvider>
             {children}
+            </StoreProvider>
+            <Suspense fallback={<></>}>
+            <EthChecker></EthChecker>
+            </Suspense>
             </div>
           </div>
         </div>
