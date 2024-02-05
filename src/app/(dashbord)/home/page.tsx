@@ -6,35 +6,55 @@ import { ethers } from "ethers"
 import { useContext, useEffect, useRef, useState } from "react"
 import SwitchChains from "./components/SwitchChains"
 
-
-
-
 const HomePage = () => {
   const { state, dispatch } = useContext(BasicContext)
   const { address, balance, currentBlockNumber, currentChain, Chains } = state
   const providerRef = useRef<ethers.BrowserProvider | null>(null)
+  const signerRef = useRef<ethers.Signer | null>(null)
   const [gas, setGas] = useState('0')
   const getGas = async () => {
-    const gasPrice = await providerRef.current!.getFeeData()
+    if (providerRef.current) {
+      const gasPrice = await providerRef.current!.getFeeData()
     const gwei = ethers.formatUnits(gasPrice.gasPrice!, 'gwei')
     setGas(gwei)
+    }
   }
+
+  const updateInTime = async () => {
+    if (providerRef.current) {
+      const num = await providerRef.current.getBlockNumber()
+      const _balance = await providerRef.current.getBalance(address)
+      dispatch && dispatch({
+        type: 'update_all',
+        payload: {
+          ...state,
+          currentBlockNumber: num,
+          balance: ethers.formatEther(_balance)
+        }
+      })
+    }
+  }
+
   useEffect(() => {
     let timer: any = null
-    timer = setInterval(() => {
-      if (providerRef.current) {
-        getGas()
-      }
-    }, 1000 * 10)
+    if (address) {
+      timer = setInterval(() => {
+        if (providerRef.current) {
+          getGas()
+          updateInTime()
+        }
+      }, 1000 * 10)
+    }
     return () => {
       if (timer) {
         clearInterval(timer)
       }
     }
-  }, [])
+  }, [address, dispatch, state])
   const connect = async () => {
+    await initProVider()
     const [selectedAddress] = await window.ethereum.request({ method: 'eth_requestAccounts' })
-    const curChainId = window.ethereum.networkVersion
+    const curChainId = await window.ethereum.request({method: 'eth_chainId'})
     const curChain = Chains.find(item => item.id === Number(curChainId))
     dispatch && dispatch({
       type: 'update_all',
@@ -59,6 +79,18 @@ const HomePage = () => {
   const closeModal = () => {
     setOpenModal(false)
   }
+
+  // provider
+  const initProVider = async () => {
+    providerRef.current = new ethers.BrowserProvider(window.ethereum)
+
+    signerRef.current = await providerRef.current.getSigner()
+  }
+
+  useEffect(() => {
+    connect()
+  }, [currentChain])
+
   return (
     <div className="p-8 flex flex-col justify-start items-center">
       {

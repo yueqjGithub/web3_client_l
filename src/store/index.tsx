@@ -28,26 +28,28 @@ export const BasicContext = createContext<{
 }>({
   state: initialState
 })
+
+
+const reducer = (state: Wallet.Store, action: {type: 'update_key' | 'update_all', payload: any, key?: keyof Wallet.Store}): Wallet.Store => {
+  switch (action.type) {
+    case 'update_key':
+      if (!action.key) {
+        throw new Error('key is required when update_key')
+      }
+      return {
+        ...state,
+        [action.key]: action.payload
+      } as Wallet.Store
+    case 'update_all':
+      return action.payload as Wallet.Store
+    default:
+      throw new Error('unknown action type')
+  }
+}
+
 export const StoreProvider = (props: {
   children: React.ReactNode
 }) => {
-
-  const reducer = (state: Wallet.Store, action: {type: 'update_key' | 'update_all', payload: any, key?: keyof Wallet.Store}): Wallet.Store => {
-    switch (action.type) {
-      case 'update_key':
-        if (!action.key) {
-          throw new Error('key is required when update_key')
-        }
-        return {
-          ...state,
-          [action.key]: action.payload
-        } as Wallet.Store
-      case 'update_all':
-        return action.payload as Wallet.Store
-      default:
-        throw new Error('unknown action type')
-    }
-  }
   const [state, dispatch] = useReducer(reducer, initialState)
   return (
     <BasicContext.Provider value={{state: state, dispatch}}>{props.children}</BasicContext.Provider>
