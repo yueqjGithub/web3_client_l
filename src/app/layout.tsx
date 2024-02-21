@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import './globals.scss'
 import { Suspense } from 'react'
 import FontControl from '@/components/fontControl'
+import WagmiOutProvider from '@/components/wagmiProvider'
+
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -17,7 +19,9 @@ export default function RootLayout({
     <html>
       <body>
         <div className='layout w-screen h-screen overflow-hidden'>
+        <WagmiOutProvider>
         {children}
+        </WagmiOutProvider>
         <Suspense fallback={<></>}>
           <FontControl></FontControl>
         </Suspense>

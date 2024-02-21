@@ -20,6 +20,11 @@ const HomePage = () => {
     }
   }
 
+  // const apiTest = () => {
+  //   const t = Interface.from('ethers.eth')
+  //   const errorDescription = t.parseError('0x08c379a0')
+  // }
+
   const updateInTime = async () => {
     if (providerRef.current) {
       const num = await providerRef.current.getBlockNumber()

@@ -25,6 +25,9 @@ const Layout = ({children}: {children: React.ReactNode}) => {
             <li>
               <Link href={'/about'}>ABOUT</Link>
             </li>
+            <li>
+              <Link href={'/profile'}>PROFILE</Link>
+            </li>
           </ul>
         </div>
         <div className="flex-1 h-full relative p-4 bg-gray-900">
